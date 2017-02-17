@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.DevMgtServiceDao">
+
+    <insert id="insertDev" parameterType="java.util.Map">
+        INSERT into tb_dev (pid, dev) values (#{pid},#{dev})
+    </insert>
+
+    <select id="queryDev" parameterType="java.lang.Long">
+        select dev from tb_dev where pid = (#{pid})
+    </select>
+
+</mapper>

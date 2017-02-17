@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.AdminDao">
+
+    <resultMap id="AdminMapper" type="com.im.server.mode.AdminInfo">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+
+    <select id="getAllAdmins" resultMap="AdminMapper">
+        select id, name, remark from tb_admin;
+    </select>
+
+</mapper>

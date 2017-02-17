@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.ClassMgtServiceDao">
+
+    <insert id="insertClassEntity" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="pid">
+        insert into tb_class(college_id, class_name) VALUES (#{collegeId}, #{className})
+    </insert>
+
+    <select id="queryClassId" parameterType="java.util.Map">
+        select pid from tb_class where class_name=#{className} and college_id=#{collegeId}
+    </select>
+
+</mapper>

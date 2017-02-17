@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+   <mapper namespace="com.im.server.dao.NoticeMgtServiceDao">
+    <resultMap id="NoticeMapper" type="com.im.server.mode.paramter.NoticeBody">
+        <result column="notice_id" property="noticeId"/>
+        <result column="content" property="content"/>
+        <result column="title" property="title"/>
+        <result column="des" property="description"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <select id="insertNotice" parameterType="com.im.server.mode.paramter.NoticeBody">
+        INSERT into tb_notice (notice_id, title, content, des)
+   		values (#{noticeId},#{title},#{content},#{description})
+    </select>
+
+    <select id="queryNotice" parameterType="java.lang.Long" resultMap="NoticeMapper">
+        select notice_id,title,content,des,type
+        from tb_notice where notice_id = #{noticeId}
+    </select>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.NoticePlanServiceDao">
+
+    <resultMap id="NoticeEntityMapper" type="com.im.server.mode.notice.NoticeEntity">
+        <result column="notice_id" property="noticeId"/>
+        <result column="des" property="des"/>
+        <result column="title" property="title"/>
+        <result column="sender_pid" property="sender.pid"/>
+        <result column="sender_name" property="sender.name"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <resultMap id="PersonEntityMapper" type="com.im.server.mode.PersonEntity">
+        <result column="pid" property="pid"/>
+        <result column="name" property="name"/>
+        <result column="major_name" property="majorName"/>
+        <result column="class_name" property="className"/>
+        <result column="univ_name" property="univName"/>
+        <result column="phone" property="phone"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+
+    <resultMap id="ContactEntityMapper" type="com.im.server.mode.notice.ContactEntity">
+        <result column="recv_name" property="name"/>
+        <result column="recv_pid" property="pid"/>
+    </resultMap>
+
+
+    <select id="insertNoticePlan" parameterType="com.im.server.mode.notice.NoticePlan">
+        INSERT into tb_notice_plan (notice_id, title, des, sender_pid, sender_name, sender_identifdy,recv_pid,recv_name, recv_identify)
+   		values (#{noticeId},#{title}, #{des}, #{senderPid},#{senderName},#{senderIdentify}, #{recvPid},#{recvName},#{recvIdentify})
+    </select>
+
+    <select id="insertNoticePlans" parameterType="java.util.List" flushCache="true">
+        INSERT into tb_notice_plan (notice_id, title, des, sender_pid, sender_name, recv_pid,recv_name) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.noticeId},#{item.title}, #{item.des},
+            #{item.senderPid},#{item.senderName},#{item.recvPid},#{item.recvName})
+        </foreach>
+    </select>
+
+    <select id="ensureRead" parameterType="java.util.Map">
+        update tb_notice_plan set is_read = '1' where notice_id =#{noticeId} and recv_pid=#{pid}
+    </select>
+
+    <select id="querySendedNotices" parameterType="java.util.Map" resultMap="NoticeEntityMapper">
+        select notice_id, des, title, sender_pid, sender_name, created_at
+        from tb_notice_plan where sender_pid= #{pid} GROUP by notice_id  order by created_at desc limit #{fromRow}, #{size};
+    </select>
+
+
+    <select id="queryUnReadNoticeCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select  count(*) as countNumber from tb_notice_plan  where recv_pid = #{pid} and is_read ='0'
+    </select>
+
+    <!--&lt;!&ndash; 服务器需要重新处理下,按照group_id&ndash;&gt;-->
+    <select id="queryReceivedNotices" parameterType="java.util.Map" resultMap="NoticeEntityMapper">
+      select notice_id, des, title, sender_pid, sender_name, is_read, created_at, updated_at
+      from tb_notice_plan where  recv_pid=#{pid}  order by created_at desc limit #{fromRow}, #{size};
+    </select>
+
+
+    <!--queryUnReadNoticePersonCount-->
+    <select id="queryUnReadNoticePersonCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select  count(*) as countNumber from tb_notice_plan  where notice_id = #{noticeId} and is_read ='0'
+    </select>
+
+
+    <select id="queryReadNoticePersonCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select  count(*) as countNumber from tb_notice_plan  where notice_id = #{noticeId} and is_read ='1'
+    </select>
+
+    <!-- contactEntityMapper-->
+    <select id="queryUnReadPersonList" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+        select recv_pid, recv_name from tb_notice_plan where notice_id=#{noticeId} and is_read='0';
+    </select>
+
+    <select id="queryReadNoticePersonList" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+        select recv_pid, recv_name from tb_notice_plan where notice_id=#{noticeId} and is_read='1';
+    </select>
+</mapper>

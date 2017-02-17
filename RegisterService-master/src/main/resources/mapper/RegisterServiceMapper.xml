@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.RegisterServiceDao">
+
+    <resultMap id="RegisterMapper" type="com.im.server.mode.RegisterEntity">
+        <result column="pid" property="pid"/>
+        <result column="pid" property="pid"/>
+        <result column="name" property="name"/>
+        <result column="univ_id" property="univId"/>
+        <result column="college_id" property="collegeId"/>
+        <result column="assistant_id" property="assistantId"/>
+        <result column="accompany" property="accompany"/>
+        <result column="pre_start_time" property="preStartTime"/>
+        <result column="pre_arrive_time" property="preArriveTime"/>
+        <result column="act_start_time" property="actStartTime"/>
+        <result column="act_arrive_time" property="actArriveTime"/>
+        <result column="trans_type" property="transType"/>
+        <result column="trans_shift" property="transShift"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="isRegistered" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT EXISTS (SELECT 1 FROM tb_register where pid=#{pid})
+    </select>
+
+    <select id="register" parameterType="com.im.server.mode.RegisterEntity">
+        INSERT into tb_register (pid, name, univ_id, college_id, assistant_id, accompany, pre_start_time
+        , pre_arrive_time, act_start_time, act_arrive_time, trans_type, trans_shift, status, remark)
+   		values (#{pid},#{name},#{univId},#{collegeId},#{assistantId},#{accompany},#{preStartTime}, #{preArriveTime}
+   		, #{actStartTime}, #{actArriveTime}, #{transType}, #{transShift}, #{status}, #{remark})
+    </select>
+
+    <select id="queryRegisterInfo" parameterType="java.lang.Long" resultMap="RegisterMapper">
+        select pid, name, univ_id, college_id, assistant_id, accompany, pre_start_time
+        , pre_arrive_time, act_start_time, act_arrive_time, trans_type, trans_shift, status, remark
+        from tb_register where pid = #{pid}
+    </select>
+
+    <select id="updateRegisterInfo" parameterType="com.im.server.mode.RegisterEntity">
+        update tb_register
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="preStartTime != null">
+                pre_start_time = #{preStartTime},
+            </if>
+            <if test="preArriveTime != null">
+                pre_arrive_time = #{preArriveTime},
+            </if>
+            <if test="transType != null">
+                trans_type = #{transType},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </trim>
+        where pid = #{pid}
+    </select>
+
+</mapper>

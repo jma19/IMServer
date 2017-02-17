@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.UnivMgtServiceDao">
+
+    <resultMap id="UniversityMapper" type="com.im.server.mode.db.University">
+        <result column="pid" property="pid"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <insert id="createUniversityEntity" parameterType="com.im.server.mode.db.University">
+        insert into tb_univ(name, code, address) VALUES (#{name}, #{code}, #{address})
+    </insert>
+
+    <select id="queryUniversityEntity" parameterType="java.lang.String" resultMap="UniversityMapper">
+        select pid, name, code, address from tb_univ where name LIKE concat('%',#{name},'%')
+    </select>
+
+    <select id="queryUniversityEntities" resultMap="UniversityMapper">
+        select pid, name, code, address from tb_univ
+    </select>
+
+</mapper>

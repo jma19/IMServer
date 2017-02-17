@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.ActivityDao">
+
+    <resultMap id="ActivityPlanMapper" type="com.im.server.mode.activity.ActivityPlanEntity">
+        <result column="activity_id" property="pid"/>
+        <result column="publisher_pid" property="publisherPid"/>
+        <result column="publisher_name" property="publisherName"/>
+        <result column="publisher_remark" property="publisherRemark"/>
+        <result column="title" property="title"/>
+        <result column="des" property="des"/>
+        <result column="recv_pid" property="recvPid"/>
+        <result column="status" property="status"/>
+        <result column="url" property="url"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+
+    <resultMap id="ActivityMapper" type="com.im.server.mode.activity.ActivityEntity">
+        <result column="activity_id" property="pid"/>
+        <result column="publisher_pid" property="publisherPid"/>
+        <result column="publisher_type" property="publisherType"/>
+        <result column="publisher_name" property="publisherName"/>
+        <result column="publisher_remark" property="publisherRemark"/>
+        <result column="title" property="title"/>
+        <result column="des" property="des"/>
+        <result column="location" property="location"/>
+        <result column="content" property="content"/>
+        <result column="start_at" property="startAt"/>
+        <result column="end_at" property="endAt"/>
+    </resultMap>
+
+
+    <resultMap id="ActivityContentMapper" type="com.im.server.mode.activity.ActivityContent">
+        <result column="activity_id" property="activityId"/>
+        <result column="publisher_pid" property="publisherPid"/>
+        <result column="publisher_type" property="publisherType"/>
+        <result column="publisher_name" property="publisherName"/>
+        <result column="publisher_remark" property="publisherRemark"/>
+        <result column="title" property="title"/>
+        <result column="des" property="des"/>
+        <result column="location" property="location"/>
+        <result column="content" property="content"/>
+        <result column="start_at" property="start"/>
+        <result column="end_at" property="end"/>
+    </resultMap>
+
+
+    <resultMap id="ActivityDesMapper" type="com.im.server.mode.activity.ActivityDesContent">
+        <result column="activity_id" property="pid"/>
+        <result column="publisher_pid" property="publisherPid"/>
+        <result column="publisher_name" property="publisherName"/>
+        <result column="publisher_remark" property="publisherRemark"/>
+        <result column="title" property="title"/>
+        <result column="des" property="des"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+
+    <!--void insertActivity(ActivityEntity activityEntity);-->
+    <insert id="insertActivity" useGeneratedKeys="true" keyProperty="pid"
+            parameterType="com.im.server.mode.activity.ActivityEntity">
+        INSERT into tb_activity (activity_id, publisher_pid, publisher_type, publisher_name,
+        publisher_remark,title, des, location, content, start_at,end_at, range)
+        values (#{pid},#{publisherPid},#{publisherType},#{publisherName},
+        #{publisherRemark},#{title},#{des},#{location},#{content},#{startTime},#{endTime},#{range})
+    </insert>
+    <!--void insertActivityPlan(ActivityPlanEntity activiyPlanEntity);-->
+    <insert id="insertActivityPlan" parameterType="com.im.server.mode.activity.ActivityPlanEntity">
+        INSERT into tb_activity_plan (activity_id, publisher_pid, publisher_name,
+        publisher_remark,title, des, recv_pid,status, url)
+        values (#{pid},#{publisherPid},#{publisherType},#{publisherName},
+        #{publisherRemark},#{title},#{des},#{recvPid},#{status},#{url})
+    </insert>
+
+    <insert id="insertActivityPlans" parameterType="java.util.List" flushCache="true">
+        INSERT into tb_activity_plan (activity_id, publisher_pid, publisher_name,
+        publisher_remark,title, des, recv_pid, head_url)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{pid},#{publisherPid},#{publisherType},#{publisherName},#{publisherRemark},#{title},#{des},#{recvPid},#{url})
+        </foreach>
+    </insert>
+
+    <!--void insertActivityPic(@Param("pid") Long pid, @Param("url") String url);-->
+    <insert id="insertActivityPic" parameterType="java.util.Map">
+        INSERT into tb_activity_pic (activity_id,url) values (#{pid},#{url})
+    </insert>
+
+    <!--<result column="activity_id" property="pid"/>-->
+    <!--<result column="publisher_pid" property="publisherPid"/>-->
+    <!--<result column="publisher_name" property="publisherName"/>-->
+    <!--<result column="publisher_remark" property="publisherRemark"/>-->
+    <!--<result column="title" property="title"/>-->
+    <!--<result column="des" property="des"/>-->
+    <!--<result column="created_at" property="createdAt"/>-->
+
+    <select id="queryActivityDesList" parameterType="com.im.server.mode.activity.RequestActivityEntity"
+            resultMap="ActivityDesMapper">
+        select activity_id, publisher_pid, publisher_name, publisher_remark, title, des, created_at
+        from tb_activity_plan where recv_pid = #{pid} order by created_at desc limit #{fromRow}, #{size}
+    </select>
+
+    <select id="queryAttendedActivityList" parameterType="com.im.server.mode.activity.RequestActivityEntity"
+            resultMap="ActivityDesMapper">
+        select activity_id, publisher_pid, publisher_name, publisher_remark, title, des, created_at
+        from tb_activity_plan where recv_pid = #{pid} and status = 2 order by created_at desc limit #{fromRow}, #{size}
+    </select>
+
+    <select id="queryPublishedActivities" parameterType="com.im.server.mode.activity.RequestActivityEntity"
+            resultMap="ActivityDesMapper">
+        select activity_id, publisher_pid, publisher_name, publisher_remark, title, des, created_at
+        from tb_activity_plan where publisher_pid = #{pid} order by created_at desc limit #{fromRow}, #{size}
+    </select>
+
+    <select id="queryMyWillAttendedActivityList" parameterType="java.util.Map" resultMap="ActivityDesMapper">
+        select activity_id, publisher_pid, publisher_name, publisher_remark, title, des, created_at
+        from tb_activity_plan where recv_pid = #{pid} and status = 2 and start_at>#{startAt} and start_at &lt; #{tommorrow}
+    </select>
+
+
+    <select id="queryActivity" parameterType="com.im.server.mode.activity.RequestActivityEntity"
+            resultMap="ActivityContentMapper">
+        select activity_id, publisher_pid, publisher_name, publisher_remark, title, des, created_at
+        from tb_activity_plan where recv_pid = #{pid} and status = 2 order by created_at desc limit #{fromRow}, #{size}
+    </select>
+
+    <select id="queryActivityUrls" parameterType="java.lang.Long">
+        select url from tb_activity_pic where activity_id = #{activityId}
+    </select>
+
+    <update id="updateActivityStatus" parameterType="com.im.server.mode.activity.UpdateActivityStatusEntity">
+        update tb_activty_plan set status = #{status} where recv_pid = #{pid} and activity_id = #{activityId}
+    </update>
+
+
+</mapper>

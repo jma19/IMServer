@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.MajorServiceDao">
+
+    <resultMap id="MajorMapper" type="com.im.server.mode.db.Major">
+        <result column="pid" property="pid"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <insert id="createMajorEntity" parameterType="com.im.server.mode.db.Major">
+        insert into tb_major(code, name) VALUES (#{code}, #{name})
+    </insert>
+
+    <select id="queryMajorEntities" resultMap="MajorMapper">
+        select pid,code,name from tb_major
+    </select>
+
+</mapper>

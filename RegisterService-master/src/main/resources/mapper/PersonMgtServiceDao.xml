@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.PersonMgtServiceDao">
+
+    <resultMap id="AsstLoginMapper" type="com.im.server.mode.LoginResponse">
+        <result column="pid" property="pid"/>
+        <result column="faculty_id" property="uniqueId"/>
+        <result column="name" property="name"/>
+        <result column="univ_name" property="univName"/>
+        <result column="college_name" property="collegeName"/>
+        <result column="head_url" property="imgUrl"/>
+    </resultMap>
+
+    <resultMap id="StdLoginMapper" type="com.im.server.mode.LoginResponse">
+        <result column="pid" property="pid"/>
+        <result column="student_id" property="uniqueId"/>
+        <result column="name" property="name"/>
+        <result column="identify_id" property="identity"/>
+        <result column="univ_id" property="univId"/>
+        <result column="univ_name" property="univName"/>
+        <result column="college_name" property="collegeName"/>
+        <result column="college_id" property="collegeId"/>
+        <result column="grade_id" property="gradeId"/>
+        <result column="grade_name" property="gradeName"/>
+        <result column="assistant_id" property="assistantId"/>
+        <result column="assistant_name" property="assistantName"/>
+        <result column="major_name" property="majorName"/>
+        <result column="class_id" property="classId"/>
+        <result column="class_name" property="className"/>
+        <result column="head_url" property="imgUrl"/>
+    </resultMap>
+
+    <resultMap id="GroupMap" type="com.im.server.mode.GroupInfo">
+        <result column="class_id" property="classId"/>
+        <result column="class_name" property="className"/>
+        <result column="assistant_id" property="assistantId"/>
+        <result column="assistant_name" property="assistantName"/>
+    </resultMap>
+
+    <select id="queryStudentPid" parameterType="java.util.Map" resultType="Long">
+        select pid from tb_student where phone = #{phone} or phone_bak =#{phone}
+    </select>
+
+    <select id="queryAssistantPid" parameterType="java.lang.String" resultType="Long">
+        select pid from tb_assistant where phone = #{phone} or phone_bak = #{phone}
+    </select>
+
+    <select id="queryAssInfo" parameterType="java.lang.Long" resultMap="AsstLoginMapper">
+        select pid, faculty_id,name, univ_name, college_name, head_url from tb_assistant where
+         pid = #{pid}
+    </select>
+
+    <select id="queryStuInfo" parameterType="java.lang.Long" resultMap="StdLoginMapper">
+        select pid,student_id,name, identify_id, univ_id, univ_name, college_id, college_name, grade_id, grade_name,assistant_id,assistant_name,
+         major_name, class_name, head_url from tb_student where pid = #{pid}
+    </select>
+
+    <select id="queryStuInfoByPhone" parameterType="java.lang.String" resultMap="StdLoginMapper">
+        select pid,student_id,name, identify_id, univ_id, univ_name, college_id, college_name,grade_id, grade_name,assistant_id,assistant_name,
+         major_name, class_id, class_name, head_url from tb_student
+        where phone = #{phone} or phone_bak=#{phone}
+    </select>
+
+    <select id="queryAssInfoByPhone" parameterType="java.lang.String" resultMap="AsstLoginMapper">
+        select pid, faculty_id,name, univ_name, college_name, head_url from tb_assistant where
+        phone = #{phone} or phone_bak=#{phone}
+    </select>
+
+    <select id="queryGroupInfoByStudentPid" parameterType="java.lang.Long" resultMap="GroupMap">
+        select class_id, class_name, assistant_id, assistant_name from tb_student where pid = #{pid}
+    </select>
+
+    <select id="queryClassInfoByAssistantId" parameterType="java.lang.Long" resultMap="GroupMap">
+        select class_id, class_name from tb_student where assistant_id = #{assistantId} group by class_id;
+    </select>
+
+</mapper>

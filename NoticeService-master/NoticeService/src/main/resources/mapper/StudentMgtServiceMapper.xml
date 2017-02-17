@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.PersonMgtServiceDao">
+
+    <resultMap id="ContactEntityMapper" type="com.im.server.mode.ContactEntity">
+        <result column="name" property="name"/>
+        <result column="pid" property="pid"/>
+    </resultMap>
+
+
+    <resultMap id="ClassMapper" type="com.im.server.mode.ClassInfo">
+        <result column="class_id" property="classId"/>
+        <result column="class_name" property="className"/>
+    </resultMap>
+
+
+    <resultMap id="studentMapper" type="com.im.server.mode.Student">
+        <result column="pid" property="pid"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <result column="studentId" property="studentId"/>
+        <result column="phone" property="phone"/>
+        <result column="phone_bak" property="phoneBak"/>
+        <result column="univ_id" property="univId"/>
+        <result column="univ_name" property="univName"/>
+        <result column="univ_code" property="univCode"/>
+        <result column="univ_address" property="univAddress"/>
+        <result column="college_id" property="collegeId"/>
+        <result column="college_name" property="collegeName"/>
+        <result column="grade_id" property="gradeId"/>
+        <result column="grade_name" property="gradeName"/>
+        <result column="assistant_name" property="assistantName"/>
+        <result column="assistant_id" property="assistantId"/>
+        <result column="class_id" property="classId"/>
+        <result column="class_name" property="className"/>
+    </resultMap>
+
+
+    <!-- 插入student url-->
+    <select id="insertStudentHeadPicUrl" parameterType="java.lang.Long">
+        insert into tb_student (head_url) VALUES (#{headUrl}) where pid = {#pid}
+    </select>
+    <!--插入 assistant head url-->
+    <select id="insertAssistantHeadPicUrl" parameterType="java.lang.Long">
+        insert into tb_assistant (head_url) VALUES (#{headUrl}) where pid = {#pid}
+    </select>
+
+    <!-- 根据classId获取对应classId对应所有学生-->
+    <select id="queryStudents" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+            select pid, name from tb_student where class_id = #{classId}
+    </select>
+
+    <!-- 获取同-->
+    <select id="queryStuContactListOfSameClass" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+        select pid, name from tb_student where class_id = (select class_id from tb_student where pid=#{pid})
+    </select>
+
+    <!--List<ContactEntity> queryAssistant(Long pid);-->
+    <select id="queryAssistant" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+        select pid, name from tb_assistant where pid = (select assistant_id from tb_student where pid=#{pid})
+    </select>
+
+    <!--     List<ContactEntity>  queryStuContactListOfSameAssistant(Long assistantId);-->
+    <select id="queryStudents" parameterType="java.lang.Long" resultMap="ContactEntityMapper">
+        select pid, name from tb_student where assistant_id= #{assistant_id}
+    </select>
+
+    <!--DivideInfo queryClassInfo(Long pid);-->
+    <select id="queryClassInfoByPid" parameterType="java.lang.Long" resultMap="ClassMapper">
+        select class_id, class_name from tb_student where pid= #{pid}
+    </select>
+
+    <select id="queryClassInfoByAssistantId" parameterType="java.lang.Long" resultMap="ClassMapper">
+        select class_id, class_name from tb_student where assistant_id= #{assistantId} GROUP by class_id
+    </select>
+
+    <!-- -->
+    <select id="queryStudent" parameterType="java.lang.Long" resultMap="studentMapper">
+        select pid, name, gender, studentId,phone, phone_bak, univ_id, univ_name,
+        univ_code, univ_address, college_id, college_name, grade_id, grade_name,
+        assistant_id, assistant_name, class_id, class_name
+         from tb_student where pid= #{pid}
+    </select>
+
+    <!--//获取classId-->
+    <!--Long queryClassId(Long pid);-->
+    <select id="queryClassId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select class_id from tb_student where pid= #{pid}
+    </select>
+
+    <select id="queryCollegeId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select college_id from tb_student where pid= #{pid}
+    </select>
+
+    <select id="queryGradeId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select grade_id from tb_student where pid= #{pid}
+    </select>
+
+    <select id="queryUnivId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select univ_id from tb_student where pid= #{pid}
+    </select>
+
+</mapper>

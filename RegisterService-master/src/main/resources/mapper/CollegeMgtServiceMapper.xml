@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.server.dao.CollegeMgtServiceDao">
+
+    <resultMap id="CollegeMapper" type="com.im.server.mode.db.College">
+        <result column="pid" property="pid"/>
+        <result column="univ_id" property="univId"/>
+        <result column="univ_name" property="univName"/>
+        <result column="college_name" property="collegeName"/>
+    </resultMap>
+
+    <insert id="createCollegeEntity" parameterType="com.im.server.mode.db.College">
+        insert into tb_college(univ_id, uinv_name, college_name) VALUES (#{univId}, #{univName}, #{collegeName})
+    </insert>
+
+    <select id="queryCollegeEntities" parameterType="java.lang.String" resultMap="CollegeMapper">
+        select pid, univ_id, univ_name, college_name from tb_college where univ_name LIKE concat('%',#{univName},'%')
+    </select>
+
+</mapper>
